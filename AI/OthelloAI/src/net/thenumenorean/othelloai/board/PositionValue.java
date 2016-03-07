@@ -8,18 +8,20 @@ package net.thenumenorean.othelloai.board;
  */
 public enum PositionValue {
 
-	MINIMAL(1,2,3), STANDARD(1,3, 7), AGGRESSIVE(1, 5, 10);
+	MINIMAL(1,2,3, -1), STANDARD(1,3, 7, -10), AGGRESSIVE(1, 2, 10, -100);
 
 	private int interiorValue;
 	private int edgeValue;
 	private int cornerValue;
+	private int noMoveValue;
 
-	private int BOARD_SIZE = 7; // 1 less than actual side length
+	private static int BOARD_SIZE = 7; // 1 less than actual side length
 
-	PositionValue(int interior, int edge, int corner) {
+	PositionValue(int interior, int edge, int corner, int noMove) {
 		this.interiorValue = interior;
 		this.edgeValue = edge;
 		this.cornerValue = corner;
+		this.noMoveValue = noMove;
 	}
 
 	/**
@@ -42,6 +44,10 @@ public enum PositionValue {
 	 * @return A positive integer value
 	 */
 	public int getValueOfLocation(int x, int y) {
+		
+		if(x < 0 || y < 0)
+			return noMoveValue;
+		
 		if ((x == BOARD_SIZE || x == 0) && (y == BOARD_SIZE || y == 0))
 			return cornerValue;
 

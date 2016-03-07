@@ -7,6 +7,8 @@ package net.thenumenorean.othelloai.board;
  *
  */
 public class Move {
+	
+	public static final Move NO_MOVE = new Move(-1, -1);
 
 	private int x, y;
 
@@ -38,6 +40,15 @@ public class Move {
 	 */
 	public int getY() {
 		return y;
+	}
+	
+	@Override
+	public boolean equals(Object m) {
+		
+		if(!(m instanceof Move))
+			return false;
+		
+		return (((Move) m).getX() == this.getX()) && (((Move) m).getY() == this.getY());
 	}
 
 }
