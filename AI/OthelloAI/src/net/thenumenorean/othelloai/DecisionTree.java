@@ -26,7 +26,8 @@ public class DecisionTree {
 	 */
 	public static class DecisionTreeNode implements Comparable<DecisionTreeNode>{
 		
-		private int value;
+		//Value is tthe 'smart' valu, score is the actual score at this stage
+		private int value, score;
 		
 		private ConcurrentSkipListSet<DecisionTreeNode> children;
 		private DecisionTreeNode parent;
@@ -92,6 +93,20 @@ public class DecisionTree {
 		 */
 		public OthelloSide getSide() {
 			return side;
+		}
+
+		/**
+		 * @return the score
+		 */
+		public int getScore() {
+			return score;
+		}
+
+		/**
+		 * @param score the score to set
+		 */
+		public void setScore(int score) {
+			this.score = score;
 		}
 		
 	}
