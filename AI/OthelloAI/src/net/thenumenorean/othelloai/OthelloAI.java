@@ -114,6 +114,8 @@ public class OthelloAI {
 
 			while (!stop) {
 
+				
+				
 			}
 
 		}

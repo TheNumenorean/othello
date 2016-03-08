@@ -37,7 +37,17 @@ public class AIJob implements Runnable {
 		 */
 
 		OthelloBoard current = generateNewBoardForMove(board, node);
+		OthelloBoard previous;
+		if(node.getParent() != null)
+		{
+			previous = generateNewBoardForMove(board, node.getParent());
+		}
+		else
+		{
+			previous = board;
+		}
 		
+		int baseValueGained = getValueDifference(previous, current);
 		
 
 	}
@@ -97,7 +107,7 @@ public class AIJob implements Runnable {
 				if(prevBoard.occupied(i, j))
 				{
 					if((prevBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK) || (prevBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE))
-					{
+					{// If the tile is yours, add the value of it to the total, otherwise subtract it.
 						prevBoardVal += pv.getValueOfLocation(i, j);
 					}
 					else
@@ -109,7 +119,7 @@ public class AIJob implements Runnable {
 				if(currBoard.occupied(i, j))
 				{
 					if((currBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK) || (currBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE))
-					{
+					{// If the tile is yours, add the value of it to the total, otherwise subtract it.
 						currBoardVal += pv.getValueOfLocation(i, j);
 					}
 					else

@@ -15,8 +15,10 @@ public class Move {
 	/**
 	 * Creates a new Move with the given coordinates.
 	 * 
-	 * @param y
 	 * @param x
+	 *            X-coordinate of move.
+	 * @param y
+	 *            Y-coordinate of move.
 	 * 
 	 */
 	public Move(int x, int y) {
@@ -27,7 +29,7 @@ public class Move {
 	/**
 	 * Get the X value for this move. If not a move, returns -1.
 	 * 
-	 * @return An integer
+	 * @return X coordinate of move
 	 */
 	public int getX() {
 		return x;
@@ -36,7 +38,7 @@ public class Move {
 	/**
 	 * Get the Y value for this move. If not a move, returns -1.
 	 * 
-	 * @return An integer
+	 * @return Y coordinate of move
 	 */
 	public int getY() {
 		return y;
