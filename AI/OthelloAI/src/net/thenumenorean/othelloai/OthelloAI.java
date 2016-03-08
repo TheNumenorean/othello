@@ -10,6 +10,8 @@ import net.thenumenorean.othelloai.comms.CommLink;
 import net.thenumenorean.othelloai.comms.StdCommLink;
 
 public class OthelloAI {
+	
+	public static final int MAX_THREADS = 20;
 
 	public final OthelloSide LOCAL_SIDE;
 
@@ -67,8 +69,8 @@ public class OthelloAI {
 	 * 
 	 * This should cause the AI to reevaluate everything it is doing.
 	 */
-	public void boardChanged() {
-
+	public void boardChanged(Move m) {
+		aiThread.boardChanged(m);
 	}
 
 	public Move getBestMove() {
@@ -103,17 +105,31 @@ public class OthelloAI {
 
 		private OthelloAI othelloAI;
 		private boolean stop;
+		private Move newMove;
 
 		public AIThread(OthelloAI othelloAI) {
 			this.othelloAI = othelloAI;
 			stop = false;
+			newMove = null;
+		}
+
+		public void boardChanged(Move m) {
+			newMove = m;
+			
 		}
 
 		@Override
 		public void run() {
 
 			while (!stop) {
-
+				
+				if(newMove != null) {
+					othelloAI.decisionTree.moveOccured(newMove);
+				}
+				
+				
+				
+				
 			}
 
 		}
