@@ -77,7 +77,16 @@ public class AIJob implements Runnable {
 		return curr;
 	}
 
-	public static int getValueDifference(OthelloBoard prevBoard, OthelloBoard currBoard, othelloAI.LOCAL_SIDE)
+	/**
+	 * Computes the difference between the values of two boards.
+	 * 
+	 * @param prevBoard
+	 *            The previous board configuration
+	 * @param currBoard
+	 *            The current board configuration after a move was played
+	 * @return The value gained/lost from the prevBoard to the currBoard.
+	 */
+	public int getValueDifference(OthelloBoard prevBoard, OthelloBoard currBoard)
 	{
 		int prevBoardVal = 0;
 		int currBoardVal = 0;
@@ -89,11 +98,11 @@ public class AIJob implements Runnable {
 				{
 					if((prevBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK) || (prevBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE))
 					{
-						prevBoardVal += getValueOfLocation(i, j);
+						prevBoardVal += pv.getValueOfLocation(i, j);
 					}
 					else
 					{
-						prevBoardVal -= getValueOfLocation(i, j);
+						prevBoardVal -= pv.getValueOfLocation(i, j);
 					}
 				}
 				
@@ -101,11 +110,11 @@ public class AIJob implements Runnable {
 				{
 					if((currBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK) || (currBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE))
 					{
-						currBoard += getValueOfLocation(i, j);
+						currBoardVal += pv.getValueOfLocation(i, j);
 					}
 					else
 					{
-						currBoard -= getValueOfLocation(i, j);
+						currBoardVal -= pv.getValueOfLocation(i, j);
 					}
 				}
 			}
