@@ -77,4 +77,39 @@ public class AIJob implements Runnable {
 		return curr;
 	}
 
+	public static int getValueDifference(OthelloBoard prevBoard, OthelloBoard currBoard, othelloAI.LOCAL_SIDE)
+	{
+		int prevBoardVal = 0;
+		int currBoardVal = 0;
+		for(int i = 0; i < 8; i++)
+		{
+			for(int j = 0; j < 8; j++)
+			{
+				if(prevBoard.occupied(i, j))
+				{
+					if((prevBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK) || (prevBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE))
+					{
+						prevBoardVal += getValueOfLocation(i, j);
+					}
+					else
+					{
+						prevBoardVal -= getValueOfLocation(i, j);
+					}
+				}
+				
+				if(currBoard.occupied(i, j))
+				{
+					if((currBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK) || (currBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE))
+					{
+						currBoard += getValueOfLocation(i, j);
+					}
+					else
+					{
+						currBoard -= getValueOfLocation(i, j);
+					}
+				}
+			}
+		}
+		return currBoardVal - prevBoardVal;
+	}
 }
