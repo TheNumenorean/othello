@@ -2,11 +2,13 @@ package net.thenumenorean.othelloai;
 
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import net.thenumenorean.othelloai.DecisionTree.DecisionTreeNode;
 import net.thenumenorean.othelloai.board.Move;
 import net.thenumenorean.othelloai.board.OthelloBoard;
+import net.thenumenorean.othelloai.board.PositionValue;
 import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
 import net.thenumenorean.othelloai.comms.CommLink;
 import net.thenumenorean.othelloai.comms.StdCommLink;
@@ -108,11 +110,13 @@ public class OthelloAI {
 		private OthelloAI othelloAI;
 		private boolean stop;
 		private Move newMove;
+		private ThreadCounter runningThreads;
 
 		public AIThread(OthelloAI othelloAI) {
 			this.othelloAI = othelloAI;
 			stop = false;
 			newMove = null;
+			runningThreads = new ThreadCounter();
 		}
 
 		public void boardChanged(Move m) {
@@ -122,14 +126,26 @@ public class OthelloAI {
 
 		@Override
 		public void run() {
+			
+			DecisionTreeSearch searcher = null;
 
 			while (!stop) {
 				
-				if(newMove != null) {
-					othelloAI.decisionTree.moveOccured(newMove);
+				if(searcher == null || searcher.finished) {
+					searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
+					(new Thread(searcher)).start();
 				}
 				
 				
+				if(newMove != null) {
+					searcher.stop();
+					othelloAI.decisionTree.moveOccured(newMove);
+				}
+				
+				if(!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
+					runningThreads.inc();;
+					(new Thread(new AIJob(othelloAI, board, PositionValue.AGGRESSIVE, searcher.discovered.poll(), runningThreads))).start();
+				}
 				
 			}
 
@@ -143,29 +159,39 @@ public class OthelloAI {
 		}
 	}
 	
+	/**
+	 * Searches through the given list, adding 
+	 * @author Francesco
+	 *
+	 */
 	private class DecisionTreeSearch implements Runnable {
 
-		public ConcurrentSkipListSet<DecisionTreeNode> discovered;
-		private boolean stop;
+		public ConcurrentLinkedQueue<DecisionTreeNode> discovered;
+		public boolean finished;
 		
-		public DecisionTreeSearch() {
-			discovered = new ConcurrentSkipListSet<DecisionTreeNode>();
+		private boolean stop;
+		private ConcurrentLinkedQueue<DecisionTreeNode> init;
+		
+		public DecisionTreeSearch(ConcurrentLinkedQueue<DecisionTreeNode> start) {
+			discovered = new ConcurrentLinkedQueue<DecisionTreeNode>();
+			this.init = start;
+			finished = false;
 		}
 		
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			
+			addChildren(init);
+			finished = true;
 		}
 		
-		private void addChildren(DecisionTreeNode node) {
+		private void addChildren(ConcurrentLinkedQueue<DecisionTreeNode> start) {
 			
 			if(stop)
 				return;
 			
-			Stack<DecisionTreeNode> next = new Stack<DecisionTreeNode>();
+			Stack<ConcurrentLinkedQueue<DecisionTreeNode>> next = new Stack<ConcurrentLinkedQueue<DecisionTreeNode>>();
 			
-			Iterator<DecisionTreeNode> iter = node.getChildren().iterator();
+			Iterator<DecisionTreeNode> iter = start.iterator();
 			DecisionTreeNode curr;
 			while(iter.hasNext()) {
 				
@@ -176,7 +202,7 @@ public class OthelloAI {
 				if(curr.getChildren().isEmpty())
 					discovered.add(curr);
 				else
-					next.push(curr);
+					next.push(curr.getChildren());
 			}
 			
 			while(!next.isEmpty()) {
@@ -192,4 +218,33 @@ public class OthelloAI {
 		
 	}
 
+	/**
+	 * Simple class to hold an integer which can keep track of the quantity of things while being passed around.
+	 * 
+	 * A mutable int.
+	 * 
+	 * @author Francesco
+	 *
+	 */
+	public static class ThreadCounter {
+		
+		private int i;
+		
+		public ThreadCounter() {
+			i = 0;
+		}
+		
+		public void inc() {
+			i++;
+		}
+		
+		public void dec() {
+			i--;
+		}
+		
+		public int val() {
+			return i;
+		}
+		
+	}
 }

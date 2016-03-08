@@ -3,6 +3,7 @@ package net.thenumenorean.othelloai;
 import java.util.Stack;
 
 import net.thenumenorean.othelloai.DecisionTree.DecisionTreeNode;
+import net.thenumenorean.othelloai.OthelloAI.ThreadCounter;
 import net.thenumenorean.othelloai.board.Move;
 import net.thenumenorean.othelloai.board.OthelloBoard;
 import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
@@ -20,12 +21,14 @@ public class AIJob implements Runnable {
 	private OthelloBoard board;
 	private PositionValue pv;
 	private DecisionTreeNode node;
+	private ThreadCounter runningThreads;
 
-	public AIJob(OthelloAI othelloAI, OthelloBoard board, PositionValue pv, DecisionTreeNode node) {
+	public AIJob(OthelloAI othelloAI, OthelloBoard board, PositionValue pv, DecisionTreeNode node, ThreadCounter runningThreads) {
 		this.othelloAI = othelloAI;
 		this.board = board;
 		this.pv = pv;
 		this.node = node;
+		this.runningThreads = runningThreads;
 	}
 
 	@Override
@@ -59,6 +62,8 @@ public class AIJob implements Runnable {
 			DecisionTreeNode childNode = othelloAI.decisionTree.new  DecisionTreeNode(move, nextSide);
 			node.addChild(childNode);
 		}
+		
+		runningThreads.dec();
 
 	}
 
