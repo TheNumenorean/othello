@@ -95,6 +95,44 @@ public class OthelloBoard {
 		return false;
 	}
 
+	/**
+	 * Gets all valid moves for a given side.
+	 * 
+	 * @param side
+	 *            Othelloside to check for valid moves.
+	 * @return Move[] containing all valid moves for the given side.  Can be empty if no valid moves.
+	 */
+	public Move[] getValidMoves(OthelloSide side)
+	{
+		//No reason to run hasMoves to check if will require running loop twice, will return empty array if no valid moves.
+		List<Move> validMovesList= new Arraylist<Move>();
+		
+		for(int i = 0; i < 8; i++)
+		{
+			for(int j = 0; j < 8; j++)
+			{
+				Move moveToTest = new Move(i, j);
+				if(checkMove(moveToTest, side))
+				{
+					validMovesList.add(moveToTest);
+				}
+			}
+		}
+		Move[] validMovesArray = new Move[validMovesList.size()];
+		return validMoves.toArray(validMovesArray);
+	}
+	
+	
+	/**
+	 * Checks that the point at the given coordinates is on the board.
+	 * 
+	 * @param x
+	 *            The x coordinate of the point to check.
+	 * @param y
+	 *            The y coordinate of the point to check.
+	 *            
+	 * @return true if the coordinate is on the board (x=0-7, y=0-7)
+	 */
 	boolean onBoard(int x, int y) {
 		return (0 <= x && x < 8 && 0 <= y && y < 8);
 	}
