@@ -8,7 +8,7 @@ import net.thenumenorean.othelloai.comms.StdCommLink;
 
 public class OthelloAI {
 	
-	public static final OthelloSide LOCAL_SIDE = OthelloBoard.OthelloSide.BLACK;
+	public final OthelloSide LOCAL_SIDE;
 
 	public OthelloBoard board;
 	public CommLink link;
@@ -16,11 +16,13 @@ public class OthelloAI {
 	private InputListener inputListener;
 	private AIThread aiThread;
 
+	private DecisionTree decisionTree;
+
 	public static void main(String[] args) {
 		
 		
 		CommLink link = new StdCommLink();
-		OthelloAI ai = new OthelloAI(link);
+		OthelloAI ai = new OthelloAI(link, OthelloSide.valueOf(args[1].toUpperCase()));
 		
 		//Better to not return this method until all is finished
 		try {
@@ -36,12 +38,15 @@ public class OthelloAI {
 	 * Creates a new OthelloAI using the given link for communication.
 	 * @param link Link for communications
 	 */
-	public OthelloAI(CommLink link) {
+	public OthelloAI(CommLink link, OthelloSide local) {
+		
+		LOCAL_SIDE = local;
 		
 		this.link = link;
 		board = new OthelloBoard();
 		inputListener = new InputListener(this);
 		aiThread = new AIThread(this);
+		decisionTree = new DecisionTree(OthelloSide.BLACK);
 		
 		
 		//Start all required threads after initializing
@@ -64,7 +69,10 @@ public class OthelloAI {
 	}
 
 	public Move getBestMove() {
-		// TODO Auto-generated method stub
+		
+		
+		
+		
 		return null;
 	}
 	
