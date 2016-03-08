@@ -130,6 +130,16 @@ public class DecisionTree {
 		public OthelloSide getSide() {
 			return side;
 		}
+		
+		@Override
+		public boolean equals(Object o) {
+			return ((DecisionTreeNode)o).move.equals(move) && ((DecisionTreeNode)o).parent.equals(parent);
+		}
+		
+		public void calculateSmartValue() {
+			
+			
+		}
 
 	}
 
