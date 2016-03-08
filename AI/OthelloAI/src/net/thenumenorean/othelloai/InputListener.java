@@ -41,8 +41,8 @@ public class InputListener implements Runnable {
 		while (!stop) {
 
 			Move m = link.receiveMove();
-			othelloAI.board.move(m, OthelloAI.LOCAL_SIDE.opposite());
-			othelloAI.boardChanged();
+			othelloAI.board.move(m, othelloAI.LOCAL_SIDE.opposite());
+			othelloAI.boardChanged(m);
 
 			try {
 				Thread.sleep(STD_DELAY);
@@ -51,7 +51,9 @@ public class InputListener implements Runnable {
 				e.printStackTrace();
 			}
 
-			link.sendMove(othelloAI.getBestMove());
+			Move next = othelloAI.getBestMove();
+			link.sendMove(next);
+			othelloAI.boardChanged(next);
 
 		}
 
