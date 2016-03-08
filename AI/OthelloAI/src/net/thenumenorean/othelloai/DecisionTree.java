@@ -30,7 +30,8 @@ public class DecisionTree {
 
 	/**
 	 * Check that the given move is valid. If so, reduce the tree to just
-	 * children of the passed move, since we don't care about the others anymore.
+	 * children of the passed move, since we don't care about the others
+	 * anymore.
 	 * 
 	 * The given move is assumed to be a move by the current player.
 	 * 
@@ -39,22 +40,21 @@ public class DecisionTree {
 	 */
 	public void moveOccured(Move m) {
 
-		DecisionTreeNode node = null;
-		for (DecisionTreeNode tmp : nextMoves) {
-			if (tmp.move.equals(m)) {
-				node = tmp;
-				break;
+		Iterator<DecisionTreeNode> iter = nextMoves.iterator();
+		while(iter.hasNext()) {
+			DecisionTreeNode test = iter.next();
+			if(test.move.equals(m)) {
+				nextMoves = test.children;
+				currentTurn = currentTurn.opposite();
+				return;
 			}
 		}
 
-		if (node == null)
-			throw new InternalError("Move passed that isnt a valid option");
+		throw new InternalError("Move passed that isnt a valid option: " + m);
 
-		nextMoves = node.children;
-		currentTurn = currentTurn.opposite();
 
 	}
-	
+
 	public OthelloSide getNextTurnPlayer() {
 		return currentTurn;
 	}
@@ -137,40 +137,40 @@ public class DecisionTree {
 		public OthelloSide getSide() {
 			return side;
 		}
-		
+
 		/*
-		@Override
-		public boolean equals(Object o) {
-			return ((DecisionTreeNode)o).move.equals(move) && ((DecisionTreeNode)o).parent.equals(parent);
-		}
-		*/
-		
+		 * @Override public boolean equals(Object o) { return
+		 * ((DecisionTreeNode)o).move.equals(move) &&
+		 * ((DecisionTreeNode)o).parent.equals(parent); }
+		 */
+
 		public void recalculateSmartValue() {
-			
-			//Should only occur if children havent been added yet.
-			if(children.isEmpty()) {
+
+			// Should only occur if children havent been added yet.
+			if (children.isEmpty()) {
 				return;
 			}
-			
+
 			Iterator<DecisionTreeNode> iterator = children.iterator();
 			int minimax = iterator.next().smartValue;
-			while(iterator.hasNext()) {
+			while (iterator.hasNext()) {
 				int next = iterator.next().smartValue;
-				if(side == DecisionTree.this.othelloAI.LOCAL_SIDE){
-					//CHild nodes are the enemies, so we assume worst case, or most negative
-					
-					if(minimax > next)
+				if (side == DecisionTree.this.othelloAI.LOCAL_SIDE) {
+					// CHild nodes are the enemies, so we assume worst case, or
+					// most negative
+
+					if (minimax > next)
 						minimax = next;
-					
-				} else if(minimax < next) {
+
+				} else if (minimax < next) {
 					minimax = next;
 				}
 			}
 			int oldSV = smartValue;
-			
+
 			smartValue = minimax + baseValue;
-			
-			if(smartValue != oldSV && parent != null)
+
+			if (smartValue != oldSV && parent != null)
 				parent.recalculateSmartValue();
 		}
 

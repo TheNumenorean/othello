@@ -62,6 +62,7 @@ public class InputListener implements Runnable {
 			}
 
 			Move next = othelloAI.getBestMove();
+			System.err.println("Sending move " + next);
 			link.sendMove(next);
 			othelloAI.boardChanged(next);
 

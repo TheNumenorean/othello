@@ -46,10 +46,6 @@ public class Move {
 	
 	@Override
 	public boolean equals(Object m) {
-		
-		if(!(m instanceof Move))
-			return false;
-		
 		return (((Move) m).getX() == this.getX()) && (((Move) m).getY() == this.getY());
 	}
 	

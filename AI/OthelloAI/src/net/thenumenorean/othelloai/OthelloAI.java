@@ -69,6 +69,7 @@ public class OthelloAI {
 		{
 			DecisionTreeNode childNode = decisionTree.new  DecisionTreeNode(move, OthelloSide.BLACK);
 			decisionTree.getPossibleNextMoves().add(childNode);
+			System.err.println("Start moves " + move);
 		}
 
 		// Inform host that init is done
@@ -153,6 +154,7 @@ public class OthelloAI {
 				if (newMove != null) {
 					searcher.stop();
 					othelloAI.decisionTree.moveOccured(newMove);
+					newMove = null;
 				}
 
 				if (!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
