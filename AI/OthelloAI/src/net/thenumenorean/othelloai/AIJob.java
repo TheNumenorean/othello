@@ -41,15 +41,18 @@ public class AIJob implements Runnable {
 
 		OthelloBoard previous = generateNewBoardForMove(board, node);
 		OthelloBoard current = previous.copy();
-		if(node.getMove().equals(Move.NO_MOVE)) {
+		if(node.getMove().equals(Move.NO_MOVE))
+		{//Eventually replace with pv value for no move case.
 			node.baseValue = 0;
 			node.smartValue = 0;
-		} else {
-		current.move(node.getMove(), node.getSide());
+		} 
+		else 
+		{
+			current.move(node.getMove(), node.getSide());
 		
-		int baseValueGained = getValueDifference(previous, current);
-		node.baseValue = baseValueGained;
-		node.smartValue = baseValueGained;
+			int baseValueGained = getValueDifference(previous, current);
+			node.baseValue = baseValueGained;
+			node.smartValue = baseValueGained;
 		}
 		if(othelloAI.LOCAL_SIDE == OthelloSide.BLACK)
 		{
