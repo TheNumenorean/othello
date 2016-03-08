@@ -1,5 +1,6 @@
 package net.thenumenorean.othelloai.board;
 import java.util.BitSet;
+import java.util.ArrayList;
 
 /**
  * Implements a standard 8x8 Othello board. <strong>TODO:</strong> Streamline.
