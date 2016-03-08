@@ -51,6 +51,14 @@ public class AIJob implements Runnable {
 		{
 			node.score = current.countWhite() - current.countBlack();
 		}
+		
+		OthelloSide nextSide = node.getSide().opposite();
+		Move[] nextMoves = current.getValidMoves(nextSide);
+		for(Move move : nextMoves)
+		{
+			DecisionTreeNode childNode = othelloAI.decisionTree.new  DecisionTreeNode(move, nextSide);
+			node.addChild(childNode);
+		}
 
 	}
 
