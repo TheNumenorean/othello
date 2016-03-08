@@ -63,6 +63,13 @@ public class OthelloAI {
 		new Thread(inputListener).start();
 		Thread t = new Thread(aiThread);
 		t.start();
+		
+		Move[] nextMoves = board.getValidMoves(OthelloSide.BLACK);
+		for(Move move : nextMoves)
+		{
+			DecisionTreeNode childNode = decisionTree.new  DecisionTreeNode(move, OthelloSide.BLACK);
+			decisionTree.getPossibleNextMoves().add(childNode);
+		}
 
 		// Inform host that init is done
 		link.sendInitDone();

@@ -23,6 +23,7 @@ public class InputListener implements Runnable {
 	private OthelloAI othelloAI;
 	private CommLink link;
 	private boolean stop;
+	private boolean firstMove;
 
 	/**
 	 * @param link
@@ -33,6 +34,7 @@ public class InputListener implements Runnable {
 		this.othelloAI = othelloAI;
 		this.link = othelloAI.link;
 		stop = false;
+		firstMove = true;
 	}
 
 	@Override
@@ -46,7 +48,11 @@ public class InputListener implements Runnable {
 			
 			if(!m.equals(Move.NO_MOVE))
 				othelloAI.board.move(m, othelloAI.LOCAL_SIDE.opposite());
-			othelloAI.boardChanged(m);
+			
+			if(!m.equals(Move.NO_MOVE) || !firstMove) {
+				firstMove = false;
+				othelloAI.boardChanged(m);
+			}
 
 			try {
 				Thread.sleep(STD_DELAY);
