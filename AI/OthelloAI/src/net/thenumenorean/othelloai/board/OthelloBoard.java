@@ -106,7 +106,7 @@ public class OthelloBoard {
 	public Move[] getValidMoves(OthelloSide side)
 	{
 		//No reason to run hasMoves to check if will require running loop twice, will return empty array if no valid moves.
-		List<Move> validMovesList= new Arraylist<Move>();
+		ArrayList<Move> validMovesList= new ArrayList<Move>();
 		
 		for(int i = 0; i < 8; i++)
 		{
@@ -120,7 +120,7 @@ public class OthelloBoard {
 			}
 		}
 		Move[] validMovesArray = new Move[validMovesList.size()];
-		return validMoves.toArray(validMovesArray);
+		return validMovesList.toArray(validMovesArray);
 	}
 	
 	
