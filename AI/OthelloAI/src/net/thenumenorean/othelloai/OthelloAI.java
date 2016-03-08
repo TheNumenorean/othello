@@ -13,7 +13,7 @@ import net.thenumenorean.othelloai.comms.CommLink;
 import net.thenumenorean.othelloai.comms.StdCommLink;
 
 public class OthelloAI {
-	
+
 	public static final int MAX_THREADS = 20;
 
 	public final OthelloSide LOCAL_SIDE;
@@ -28,16 +28,12 @@ public class OthelloAI {
 
 	public static void main(String[] args) {
 
-		CommLink link = new StdCommLink();
-		OthelloAI ai = new OthelloAI(link, OthelloSide.valueOf(args[1].toUpperCase()));
+		System.err.println("Starting...");
 
-		// Better to not return this method until all is finished
-		try {
-			ai.wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		CommLink link = new StdCommLink();
+		OthelloAI ai = new OthelloAI(link, OthelloSide.valueOf(args[0].toUpperCase()));
+
+		ai.run();
 
 	}
 
@@ -55,15 +51,27 @@ public class OthelloAI {
 		board = new OthelloBoard();
 		inputListener = new InputListener(this);
 		aiThread = new AIThread(this);
-		decisionTree = new DecisionTree(this, OthelloSide.BLACK); //Black always starts games
+		decisionTree = new DecisionTree(this, OthelloSide.BLACK); // Black
+																	// always
+																	// starts
+																	// games
 
+	}
+
+	public void run() {
 		// Start all required threads after initializing
 		new Thread(inputListener).start();
-		new Thread(aiThread).start();
+		Thread t = new Thread(aiThread);
+		t.start();
 
 		// Inform host that init is done
 		link.sendInitDone();
-
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -120,32 +128,33 @@ public class OthelloAI {
 
 		public void boardChanged(Move m) {
 			newMove = m;
-			
+
 		}
 
 		@Override
 		public void run() {
-			
+
 			DecisionTreeSearch searcher = null;
 
 			while (!stop) {
-				
-				if(searcher == null || searcher.finished) {
+
+				if (searcher == null || searcher.finished) {
 					searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
 					(new Thread(searcher)).start();
 				}
-				
-				
-				if(newMove != null) {
+
+				if (newMove != null) {
 					searcher.stop();
 					othelloAI.decisionTree.moveOccured(newMove);
 				}
-				
-				if(!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
-					runningThreads.inc();;
-					(new Thread(new AIJob(othelloAI, board, PositionValue.AGGRESSIVE, searcher.discovered.poll(), runningThreads))).start();
+
+				if (!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
+					runningThreads.inc();
+					;
+					(new Thread(new AIJob(othelloAI, board, PositionValue.AGGRESSIVE, searcher.discovered.poll(),
+							runningThreads))).start();
 				}
-				
+
 			}
 
 		}
@@ -157,9 +166,10 @@ public class OthelloAI {
 			stop = true;
 		}
 	}
-	
+
 	/**
-	 * Searches through the given list, adding 
+	 * Searches through the given list, adding
+	 * 
 	 * @author Francesco
 	 *
 	 */
@@ -167,58 +177,59 @@ public class OthelloAI {
 
 		public ConcurrentLinkedQueue<DecisionTreeNode> discovered;
 		public boolean finished;
-		
+
 		private boolean stop;
 		private ConcurrentLinkedQueue<DecisionTreeNode> init;
-		
+
 		public DecisionTreeSearch(ConcurrentLinkedQueue<DecisionTreeNode> start) {
 			discovered = new ConcurrentLinkedQueue<DecisionTreeNode>();
 			this.init = start;
 			finished = false;
 		}
-		
+
 		@Override
 		public void run() {
 			addChildren(init);
 			finished = true;
 		}
-		
+
 		private void addChildren(ConcurrentLinkedQueue<DecisionTreeNode> start) {
-			
-			if(stop)
+
+			if (stop)
 				return;
-			
+
 			Stack<ConcurrentLinkedQueue<DecisionTreeNode>> next = new Stack<ConcurrentLinkedQueue<DecisionTreeNode>>();
-			
+
 			Iterator<DecisionTreeNode> iter = start.iterator();
 			DecisionTreeNode curr;
-			while(iter.hasNext()) {
-				
-				if(stop)
+			while (iter.hasNext()) {
+
+				if (stop)
 					return;
-				
+
 				curr = iter.next();
-				if(curr.getChildren().isEmpty())
+				if (curr.getChildren().isEmpty())
 					discovered.add(curr);
 				else
 					next.push(curr.getChildren());
 			}
-			
-			while(!next.isEmpty()) {
-				if(stop)
+
+			while (!next.isEmpty()) {
+				if (stop)
 					return;
 				addChildren(next.pop());
 			}
 		}
-		
+
 		public void stop() {
 			stop = true;
 		}
-		
+
 	}
 
 	/**
-	 * Simple class to hold an integer which can keep track of the quantity of things while being passed around.
+	 * Simple class to hold an integer which can keep track of the quantity of
+	 * things while being passed around.
 	 * 
 	 * A mutable int.
 	 * 
@@ -226,24 +237,24 @@ public class OthelloAI {
 	 *
 	 */
 	public static class ThreadCounter {
-		
+
 		private int i;
-		
+
 		public ThreadCounter() {
 			i = 0;
 		}
-		
+
 		public void inc() {
 			i++;
 		}
-		
+
 		public void dec() {
 			i--;
 		}
-		
+
 		public int val() {
 			return i;
 		}
-		
+
 	}
 }
