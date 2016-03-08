@@ -1,6 +1,8 @@
 package net.thenumenorean.othelloai;
 
 import java.util.Iterator;
+import java.util.Stack;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import net.thenumenorean.othelloai.DecisionTree.DecisionTreeNode;
 import net.thenumenorean.othelloai.board.Move;
@@ -21,7 +23,7 @@ public class OthelloAI {
 	private InputListener inputListener;
 	private AIThread aiThread;
 
-	private DecisionTree decisionTree;
+	public DecisionTree decisionTree;
 
 	public static void main(String[] args) {
 
@@ -128,6 +130,7 @@ public class OthelloAI {
 				}
 				
 				
+				
 			}
 
 		}
@@ -138,6 +141,55 @@ public class OthelloAI {
 		public void stop() {
 			stop = true;
 		}
+	}
+	
+	private class DecisionTreeSearch implements Runnable {
+
+		public ConcurrentSkipListSet<DecisionTreeNode> discovered;
+		private boolean stop;
+		
+		public DecisionTreeSearch() {
+			discovered = new ConcurrentSkipListSet<DecisionTreeNode>();
+		}
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		private void addChildren(DecisionTreeNode node) {
+			
+			if(stop)
+				return;
+			
+			Stack<DecisionTreeNode> next = new Stack<DecisionTreeNode>();
+			
+			Iterator<DecisionTreeNode> iter = node.getChildren().iterator();
+			DecisionTreeNode curr;
+			while(iter.hasNext()) {
+				
+				if(stop)
+					return;
+				
+				curr = iter.next();
+				if(curr.getChildren().isEmpty())
+					discovered.add(curr);
+				else
+					next.push(curr);
+			}
+			
+			while(!next.isEmpty()) {
+				if(stop)
+					return;
+				addChildren(next.pop());
+			}
+		}
+		
+		public void stop() {
+			stop = true;
+		}
+		
 	}
 
 }
