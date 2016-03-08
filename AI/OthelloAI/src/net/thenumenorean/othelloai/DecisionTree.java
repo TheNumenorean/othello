@@ -1,6 +1,7 @@
 package net.thenumenorean.othelloai;
 
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.thenumenorean.othelloai.board.Move;
 import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
@@ -13,15 +14,15 @@ import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
  */
 public class DecisionTree {
 
-	private ConcurrentSkipListSet<DecisionTreeNode> nextMoves;
+	private ConcurrentLinkedQueue<DecisionTreeNode> nextMoves;
 	private OthelloSide currentTurn;
 
 	public DecisionTree(OthelloSide currentTurn) {
 		this.currentTurn = currentTurn;
-		nextMoves = new ConcurrentSkipListSet<DecisionTreeNode>();
+		nextMoves = new ConcurrentLinkedQueue<DecisionTreeNode>();
 	}
 
-	public ConcurrentSkipListSet<DecisionTreeNode> getPossibleNextMoves() {
+	public ConcurrentLinkedQueue<DecisionTreeNode> getPossibleNextMoves() {
 		return nextMoves;
 	}
 
@@ -75,7 +76,7 @@ public class DecisionTree {
 		 */
 		public int score;
 
-		private ConcurrentSkipListSet<DecisionTreeNode> children;
+		private ConcurrentLinkedQueue<DecisionTreeNode> children;
 		private DecisionTreeNode parent;
 
 		private Move move;
@@ -83,7 +84,7 @@ public class DecisionTree {
 		private OthelloSide side;
 
 		public DecisionTreeNode(Move m, OthelloSide side) {
-			children = new ConcurrentSkipListSet<DecisionTreeNode>();
+			children = new ConcurrentLinkedQueue<DecisionTreeNode>();
 			this.move = m;
 			this.side = side;
 
@@ -108,7 +109,7 @@ public class DecisionTree {
 		/**
 		 * @return the children
 		 */
-		public ConcurrentSkipListSet<DecisionTreeNode> getChildren() {
+		public ConcurrentLinkedQueue<DecisionTreeNode> getChildren() {
 			return children;
 		}
 
@@ -131,14 +132,40 @@ public class DecisionTree {
 			return side;
 		}
 		
+		/*
 		@Override
 		public boolean equals(Object o) {
 			return ((DecisionTreeNode)o).move.equals(move) && ((DecisionTreeNode)o).parent.equals(parent);
 		}
+		*/
 		
-		public void calculateSmartValue() {
+		public void recalculateSmartValue() {
 			
+			//Should only occur if children havent been added yet.
+			if(children.isEmpty()) {
+				return;
+			}
 			
+			Iterator<DecisionTreeNode> iterator = children.iterator();
+			int minimax = iterator.next().smartValue;
+			while(iterator.hasNext()) {
+				int next = iterator.next().smartValue;
+				if(side == OthelloAI.LOCAL_SIDE){
+					//CHild nodes are the enemies, so we assume worst case, or most negative
+					
+					if(minimax > next)
+						minimax = next;
+					
+				} else if(minimax < next) {
+					minimax = next;
+				}
+			}
+			int oldSV = smartValue;
+			
+			smartValue = minimax + baseValue;
+			
+			if(smartValue != oldSV && parent != null)
+				parent.recalculateSmartValue();
 		}
 
 	}
