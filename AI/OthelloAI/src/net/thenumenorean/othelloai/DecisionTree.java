@@ -16,8 +16,10 @@ public class DecisionTree {
 
 	private ConcurrentLinkedQueue<DecisionTreeNode> nextMoves;
 	private OthelloSide currentTurn;
+	private OthelloAI othelloAI;
 
-	public DecisionTree(OthelloSide currentTurn) {
+	public DecisionTree(OthelloAI othelloAI, OthelloSide currentTurn) {
+		this.othelloAI = othelloAI;
 		this.currentTurn = currentTurn;
 		nextMoves = new ConcurrentLinkedQueue<DecisionTreeNode>();
 	}
@@ -28,12 +30,12 @@ public class DecisionTree {
 
 	/**
 	 * Check that the given move is valid. If so, reduce the tree to just
-	 * children of the passed move, since we dont care about the others anymore.
+	 * children of the passed move, since we don't care about the others anymore.
 	 * 
 	 * The given move is assumed to be a move by the current player.
 	 * 
 	 * @param m
-	 *            The move that occured.
+	 *            The move that occurred.
 	 */
 	public void moveOccured(Move m) {
 
@@ -52,6 +54,10 @@ public class DecisionTree {
 		currentTurn = currentTurn.opposite();
 
 	}
+	
+	public OthelloSide getNextTurnPlayer() {
+		return currentTurn;
+	}
 
 	/**
 	 * Represents a single move in the tree.
@@ -59,7 +65,7 @@ public class DecisionTree {
 	 * @author Francesco
 	 *
 	 */
-	public static class DecisionTreeNode implements Comparable<DecisionTreeNode> {
+	public class DecisionTreeNode implements Comparable<DecisionTreeNode> {
 
 		/**
 		 * the value this specific move gets
@@ -150,7 +156,7 @@ public class DecisionTree {
 			int minimax = iterator.next().smartValue;
 			while(iterator.hasNext()) {
 				int next = iterator.next().smartValue;
-				if(side == OthelloAI.LOCAL_SIDE){
+				if(side == DecisionTree.this.othelloAI.LOCAL_SIDE){
 					//CHild nodes are the enemies, so we assume worst case, or most negative
 					
 					if(minimax > next)
