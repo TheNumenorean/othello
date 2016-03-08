@@ -3,13 +3,12 @@ package net.thenumenorean.othelloai;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import net.thenumenorean.othelloai.DecisionTree.DecisionTreeNode;
 import net.thenumenorean.othelloai.board.Move;
 import net.thenumenorean.othelloai.board.OthelloBoard;
-import net.thenumenorean.othelloai.board.PositionValue;
 import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
+import net.thenumenorean.othelloai.board.PositionValue;
 import net.thenumenorean.othelloai.comms.CommLink;
 import net.thenumenorean.othelloai.comms.StdCommLink;
 
