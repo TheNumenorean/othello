@@ -95,7 +95,9 @@ public class AIJob implements Runnable {
 
 		OthelloBoard curr = base.copy();
 		while (!moves.isEmpty()) {
-			curr.move(moves.pop(), side);
+			Move nextMove = moves.pop();
+			if(!tmp.equals(Move.NO_MOVE))
+				curr.move(nextMove, side);
 			side = side.opposite();
 		}
 

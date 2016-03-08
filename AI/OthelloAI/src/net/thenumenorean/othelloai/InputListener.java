@@ -41,7 +41,11 @@ public class InputListener implements Runnable {
 		while (!stop) {
 
 			Move m = link.receiveMove();
-			othelloAI.board.move(m, othelloAI.LOCAL_SIDE.opposite());
+			
+			System.err.println("Received move " + m);
+			
+			if(!m.equals(Move.NO_MOVE))
+				othelloAI.board.move(m, othelloAI.LOCAL_SIDE.opposite());
 			othelloAI.boardChanged(m);
 
 			try {

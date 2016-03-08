@@ -52,5 +52,10 @@ public class Move {
 		
 		return (((Move) m).getX() == this.getX()) && (((Move) m).getY() == this.getY());
 	}
+	
+	@Override
+	public String toString() {
+		return "{" + x + ":" + y + "}";
+	}
 
 }
