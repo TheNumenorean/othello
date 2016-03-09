@@ -120,6 +120,9 @@ public class OthelloBoard {
 			}
 		}
 		Move[] validMovesArray = new Move[validMovesList.size()];
+		
+		if(validMovesList.size() == 0)
+			validMovesList.add(Move.NO_MOVE);
 		return validMovesList.toArray(validMovesArray);
 	}
 	
@@ -155,7 +158,9 @@ public class OthelloBoard {
 
 		// Make sure the square hasn't already been taken.
 		if (occupied(m.getX(), m.getY()))
+		{
 			return false;
+		}
 
 		OthelloSide other = turn.opposite();
 		int X = m.getX();
@@ -197,7 +202,7 @@ public class OthelloBoard {
 			return;
 
 		if (!checkMove(m, turn)) {
-			throw new InternalError("Invalid Move " + m);
+			throw new InternalError("Invalid Move US " + m);
 		}
 
 		OthelloSide other = turn.opposite();

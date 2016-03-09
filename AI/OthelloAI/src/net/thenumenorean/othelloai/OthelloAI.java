@@ -96,7 +96,7 @@ public class OthelloAI {
 
 		if (decisionTree.getNextTurnPlayer() != LOCAL_SIDE)
 			throw new InternalError("Tried to get best move for non-local side");
-
+		
 		Iterator<DecisionTreeNode> iter = decisionTree.getPossibleNextMoves().iterator();
 		DecisionTreeNode minimax = iter.next();
 		while (iter.hasNext()) {
@@ -147,6 +147,17 @@ public class OthelloAI {
 			while (!stop) {
 
 				if (searcher == null || searcher.finished) {
+					//System.err.println("Restarting searcher...");
+					if(decisionTree.getPossibleNextMoves().isEmpty()) {
+						
+						Move[] nextMoves = board.getValidMoves(decisionTree.getNextTurnPlayer());
+						for(Move move : nextMoves)
+						{
+							DecisionTreeNode childNode = othelloAI.decisionTree.new  DecisionTreeNode(move, decisionTree.getNextTurnPlayer());
+							decisionTree.getPossibleNextMoves().add(childNode);
+						}
+						
+					}
 					searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
 					(new Thread(searcher)).start();
 				}
@@ -155,14 +166,19 @@ public class OthelloAI {
 					searcher.stop();
 					othelloAI.decisionTree.moveOccured(newMove);
 					newMove = null;
+					
 				}
 
+				//System.err.println(searcher.discovered.size());
 				if (!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
 					runningThreads.inc();
-					;
-					(new Thread(new AIJob(othelloAI, board, PositionValue.AGGRESSIVE, searcher.discovered.poll(),
+					
+					(new Thread(new AIJob(othelloAI, board, PositionValue.MINIMAL, searcher.discovered.poll(),
 							runningThreads))).start();
+					
 				}
+				
+				
 
 			}
 
@@ -194,6 +210,10 @@ public class OthelloAI {
 			discovered = new ConcurrentLinkedQueue<DecisionTreeNode>();
 			this.init = start;
 			finished = false;
+			stop = false;
+			
+			if(start.isEmpty())
+				System.err.println("empty");
 		}
 
 		@Override
@@ -203,7 +223,8 @@ public class OthelloAI {
 		}
 
 		private void addChildren(ConcurrentLinkedQueue<DecisionTreeNode> start) {
-
+			
+			
 			if (stop)
 				return;
 
@@ -217,8 +238,11 @@ public class OthelloAI {
 					return;
 
 				curr = iter.next();
-				if (curr.getChildren().isEmpty())
+				//System.err.println("NOd: " + curr.toString());
+				if (!curr.checked) {
+					curr.checked = true;
 					discovered.add(curr);
+				}
 				else
 					next.push(curr.getChildren());
 			}
@@ -226,6 +250,7 @@ public class OthelloAI {
 			while (!next.isEmpty()) {
 				if (stop)
 					return;
+				
 				addChildren(next.pop());
 			}
 		}
@@ -253,12 +278,14 @@ public class OthelloAI {
 			i = 0;
 		}
 
-		public void inc() {
+		synchronized public void inc() {
 			i++;
+			System.err.println("Incr to " + i);
 		}
 
-		public void dec() {
+		synchronized public void dec() {
 			i--;
+			System.err.println("Decr to " + i);
 		}
 
 		public int val() {

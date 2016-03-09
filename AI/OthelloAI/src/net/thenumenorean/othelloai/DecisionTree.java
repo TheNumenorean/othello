@@ -3,6 +3,7 @@ package net.thenumenorean.othelloai;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import net.thenumenorean.othelloai.DecisionTree.DecisionTreeNode;
 import net.thenumenorean.othelloai.board.Move;
 import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
 
@@ -45,6 +46,7 @@ public class DecisionTree {
 			DecisionTreeNode test = iter.next();
 			if(test.move.equals(m)) {
 				nextMoves = test.children;
+				test.setParent(null);
 				currentTurn = currentTurn.opposite();
 				return;
 			}
@@ -84,10 +86,11 @@ public class DecisionTree {
 
 		private ConcurrentLinkedQueue<DecisionTreeNode> children;
 		private DecisionTreeNode parent;
-
 		private Move move;
 
 		private OthelloSide side;
+		
+		public boolean checked;
 
 		public DecisionTreeNode(Move m, OthelloSide side) {
 			children = new ConcurrentLinkedQueue<DecisionTreeNode>();
@@ -97,6 +100,7 @@ public class DecisionTree {
 			baseValue = Integer.MIN_VALUE;
 			smartValue = Integer.MIN_VALUE;
 			score = Integer.MIN_VALUE;
+			checked = false;
 		}
 
 		@Override
@@ -172,6 +176,18 @@ public class DecisionTree {
 
 			if (smartValue != oldSV && parent != null)
 				parent.recalculateSmartValue();
+		}
+		
+		@Override
+		public String toString() {
+			String out = this.getMove().toString();
+			
+			DecisionTreeNode tmp = this;
+			while (tmp.getParent() != null) {
+				out += "->" + tmp.getMove();
+				tmp = tmp.getParent();
+			}
+			return out;
 		}
 
 	}

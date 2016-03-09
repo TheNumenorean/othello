@@ -19,7 +19,7 @@ public class InputListener implements Runnable {
 	/**
 	 * How long to wait in between sending the current best move
 	 */
-	private static final long STD_DELAY = 5000;
+	private static final long STD_DELAY = 2000;
 	private OthelloAI othelloAI;
 	private CommLink link;
 	private boolean stop;
@@ -47,8 +47,10 @@ public class InputListener implements Runnable {
 			System.err.println("Received move " + m);
 			
 			if(!m.equals(Move.NO_MOVE))
+			{
 				othelloAI.board.move(m, othelloAI.LOCAL_SIDE.opposite());
-			
+			}
+				
 			if(!m.equals(Move.NO_MOVE) || !firstMove) {
 				firstMove = false;
 				othelloAI.boardChanged(m);
@@ -63,6 +65,7 @@ public class InputListener implements Runnable {
 
 			Move next = othelloAI.getBestMove();
 			System.err.println("Sending move " + next);
+			othelloAI.board.move(next, othelloAI.LOCAL_SIDE);
 			link.sendMove(next);
 			othelloAI.boardChanged(next);
 
