@@ -179,10 +179,10 @@ public class DecisionTree {
 		
 		@Override
 		public String toString() {
-			String out = this.getMove().toString();
+			String out = "";
 			
 			DecisionTreeNode tmp = this;
-			while (tmp.getParent() != null) {
+			while (tmp != null) {
 				out += "->" + tmp.getMove();
 				tmp = tmp.getParent();
 			}
