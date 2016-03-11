@@ -106,7 +106,7 @@ public class OthelloAI {
 		while (iter.hasNext()) {
 			DecisionTreeNode next = iter.next();
 
-			System.err.print("{" + minimax.smartValue + ":" + next.smartValue + "}" + next.beingProcessed);
+			System.err.print("{" + minimax.smartValue + ":" + next.smartValue + "}");
 
 			if (minimax.smartValue < next.smartValue)
 				minimax = next;
@@ -147,6 +147,8 @@ public class OthelloAI {
 
 		@Override
 		public void run() {
+			
+			Thread.currentThread().setName("MainAIThread");
 
 			DecisionTreeSearch searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
 			(new Thread(searcher)).start();
@@ -174,6 +176,16 @@ public class OthelloAI {
 					}
 					searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
 					(new Thread(searcher)).start();
+					
+					while(runningThreads.val() > 0) {
+						try {
+							Thread.sleep(5);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					System.err.println("Starting threads again");
 
 				}
 
@@ -230,6 +242,7 @@ public class OthelloAI {
 		@Override
 		public void run() {
 			finished = false;
+			Thread.currentThread().setName("SearchThread");
 			//System.err.println(init);
 			addChildren(init);
 			finished = true;

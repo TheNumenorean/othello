@@ -19,7 +19,7 @@ public class InputListener implements Runnable {
 	/**
 	 * How long to wait in between sending the current best move
 	 */
-	private static final long STD_DELAY = 5000;
+	private static final long STD_DELAY = 10000;
 	private OthelloAI othelloAI;
 	private CommLink link;
 	private boolean stop;
@@ -39,6 +39,7 @@ public class InputListener implements Runnable {
 
 	@Override
 	public void run() {
+		Thread.currentThread().setName("InputListener");
 
 		while (!stop) {
 

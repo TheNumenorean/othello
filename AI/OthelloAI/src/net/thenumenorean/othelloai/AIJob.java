@@ -43,6 +43,7 @@ public class AIJob implements Runnable {
 		node.beingProcessed = true;
 
 		System.err.println("Starting job on " + node.getMove());
+		Thread.currentThread().setName("AIJob-" + node.getMove());
 
 		OthelloBoard previous = updateBoardForMove(board.copy(), node);
 		OthelloBoard current = previous.copy();
