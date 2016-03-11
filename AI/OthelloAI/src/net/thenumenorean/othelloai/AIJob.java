@@ -38,6 +38,8 @@ public class AIJob implements Runnable {
 		 * This method should calculate the value of the current move, then
 		 * propagate it up the line to other moves.
 		 */
+		
+		System.err.println("Starting job on " + node.getMove());
 
 		OthelloBoard previous = generateNewBoardForMove(board, node);
 		OthelloBoard current = previous.copy();

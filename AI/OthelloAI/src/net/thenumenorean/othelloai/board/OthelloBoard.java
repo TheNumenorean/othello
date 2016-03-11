@@ -152,7 +152,7 @@ public class OthelloBoard {
 	// might be able to do clever stuff with masks and next clear bit
 	// and the like.
 	public boolean checkMove(Move m, OthelloSide turn) {
-		if (m == null)
+		if (m == null || m.equals(Move.NO_MOVE))
 			// passing is only legal if you have no moves
 			return !hasMoves(turn);
 
@@ -198,7 +198,7 @@ public class OthelloBoard {
 	 **/
 	public void move(Move m, OthelloSide turn) {
 		// null means pass.
-		if (m == null)
+		if (m == null || m.equals(Move.NO_MOVE))
 			return;
 
 		if (!checkMove(m, turn)) {
