@@ -39,41 +39,50 @@ public class AIJob implements Runnable {
 		 * This method should calculate the value of the current move, then
 		 * propagate it up the line to other moves.
 		 */
-		
+
 		node.beingProcessed = true;
 
 		System.err.println("Starting job on " + node.getMove());
-		Thread.currentThread().setName("AIJob-" + node.getMove());
+		Thread.currentThread().setName("AIJob-" + node.getMove() + "-" + Thread.currentThread().getId());
 
-		OthelloBoard previous = updateBoardForMove(board.copy(), node);
-		OthelloBoard current = previous.copy();
-		if (node.getMove().equals(Move.NO_MOVE)) {// Eventually replace with pv
-													// value for no move case.
-			node.baseValue = 0;
-			node.smartValue = 0;
-		} else {
-			current.move(node.getMove(), node.getSide());
+		// The thread must finish to decrease the counter or there wont be any
+		// new threads.
+		try {
+			OthelloBoard previous = updateBoardForMove(board.copy(), node);
+			OthelloBoard current = previous.copy();
+			if (node.getMove().equals(Move.NO_MOVE)) {// Eventually replace with
+														// pv
+														// value for no move
+														// case.
+				node.baseValue = 0;
+				node.smartValue = 0;
+			} else {
+				current.move(node.getMove(), node.getSide());
 
-			int baseValueGained = getValueDifference(previous, current);
-			node.baseValue = baseValueGained;
-			node.smartValue = baseValueGained;
+				int baseValueGained = getValueDifference(previous, current);
+				node.baseValue = baseValueGained;
+				node.smartValue = baseValueGained;
+			}
+			if (othelloAI.LOCAL_SIDE == OthelloSide.BLACK) {
+				node.score = current.countBlack() - current.countWhite();
+			} else {
+				node.score = current.countWhite() - current.countBlack();
+			}
+
+			OthelloSide nextSide = node.getSide().opposite();
+			Move[] nextMoves = current.getValidMoves(nextSide);
+			for (Move move : nextMoves) {
+				DecisionTreeNode childNode = othelloAI.decisionTree.new DecisionTreeNode(move, nextSide);
+				node.addChild(childNode);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+			runningThreads.dec();
+			node.beingProcessed = false;
 		}
-		if (othelloAI.LOCAL_SIDE == OthelloSide.BLACK) {
-			node.score = current.countBlack() - current.countWhite();
-		} else {
-			node.score = current.countWhite() - current.countBlack();
-		}
 
-		OthelloSide nextSide = node.getSide().opposite();
-		Move[] nextMoves = current.getValidMoves(nextSide);
-		for (Move move : nextMoves) {
-			DecisionTreeNode childNode = othelloAI.decisionTree.new DecisionTreeNode(move, nextSide);
-			node.addChild(childNode);
-		}
-
-		runningThreads.dec();
-		node.beingProcessed = false;
-		
 	}
 
 	/**
@@ -101,7 +110,7 @@ public class AIJob implements Runnable {
 			moves.push(tmp.getMove());
 			side = side.opposite();
 		}
-		
+
 		while (!moves.isEmpty()) {
 			Move nextMove = moves.pop();
 			if (!tmp.equals(Move.NO_MOVE))
