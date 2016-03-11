@@ -2,3 +2,5 @@
 .recommenders
 RemoteSystemsTempFiles
 .classpath
+testgame
+testgame.o
