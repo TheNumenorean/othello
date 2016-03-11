@@ -4,3 +4,4 @@ RemoteSystemsTempFiles
 .classpath
 testgame
 testgame.o
+tmp.txt
