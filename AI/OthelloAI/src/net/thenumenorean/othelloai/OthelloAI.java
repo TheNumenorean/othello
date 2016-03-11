@@ -1,7 +1,8 @@
 package net.thenumenorean.othelloai;
 
 import java.util.Iterator;
-import java.util.Stack;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.thenumenorean.othelloai.DecisionTree.DecisionTreeNode;
@@ -105,7 +106,7 @@ public class OthelloAI {
 		while (iter.hasNext()) {
 			DecisionTreeNode next = iter.next();
 
-			System.err.print("{" + minimax.smartValue + ":" + next.smartValue + "}" + next.checked);
+			System.err.print("{" + minimax.smartValue + ":" + next.smartValue + "}" + next.beingProcessed);
 
 			if (minimax.smartValue < next.smartValue)
 				minimax = next;
@@ -148,28 +149,35 @@ public class OthelloAI {
 		public void run() {
 
 			DecisionTreeSearch searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
-			;
 			(new Thread(searcher)).start();
 
 			while (!stop) {
 
 				if (searcher.finished) {
 					// System.err.println("Restarting searcher...");
-
 					(new Thread(searcher)).start();
-
 				}
 
 				if (newMove != null) {
 					searcher.stop();
-					searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
 					othelloAI.decisionTree.moveOccured(newMove);
 					newMove = null;
+					
+					if(decisionTree.getPossibleNextMoves().isEmpty()) {
+						Move[] nextMoves = board.getValidMoves(OthelloSide.BLACK);
+						for (Move move : nextMoves) {
+							DecisionTreeNode childNode = decisionTree.new DecisionTreeNode(move, OthelloSide.BLACK);
+							decisionTree.getPossibleNextMoves().add(childNode);
+						}
+
+						System.err.println("DecisionTree was empty so readded values: " + decisionTree.getPossibleNextMoves());
+					}
+					searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
 					(new Thread(searcher)).start();
 
 				}
 
-				System.err.println(searcher.discovered.size());
+				//System.err.println(searcher.discovered.size());
 				if (!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
 					runningThreads.inc();
 
@@ -178,12 +186,10 @@ public class OthelloAI {
 
 				}
 
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				/*
+				 * try { Thread.sleep(1); } catch (InterruptedException e) { //
+				 * TODO Auto-generated catch block e.printStackTrace(); }
+				 */
 
 			}
 
@@ -215,7 +221,6 @@ public class OthelloAI {
 		public DecisionTreeSearch(ConcurrentLinkedQueue<DecisionTreeNode> start) {
 			discovered = new ConcurrentLinkedQueue<DecisionTreeNode>();
 			this.init = start;
-			finished = false;
 			stop = false;
 
 			if (start.isEmpty())
@@ -224,38 +229,37 @@ public class OthelloAI {
 
 		@Override
 		public void run() {
+			finished = false;
+			//System.err.println(init);
 			addChildren(init);
 			finished = true;
 		}
 
 		private void addChildren(ConcurrentLinkedQueue<DecisionTreeNode> start) {
 
-			if (stop)
-				return;
-
-			Stack<ConcurrentLinkedQueue<DecisionTreeNode>> next = new Stack<ConcurrentLinkedQueue<DecisionTreeNode>>();
-
-			Iterator<DecisionTreeNode> iter = start.iterator();
-			DecisionTreeNode curr;
-			while (iter.hasNext()) {
-
-				if (stop)
-					return;
-
-				curr = iter.next();
-				System.err.println("NOd: " + curr.toString() + " " + curr.checked);
-				if (!curr.checked) {
-					curr.checked = true;
-					discovered.add(curr);
-				} else
-					next.push(curr.getChildren());
-			}
+			Queue<ConcurrentLinkedQueue<DecisionTreeNode>> next = new LinkedList<ConcurrentLinkedQueue<DecisionTreeNode>>();
+			next.add(start);
 
 			while (!next.isEmpty()) {
 				if (stop)
 					return;
 
-				addChildren(next.pop());
+				Iterator<DecisionTreeNode> iter = next.poll().iterator();
+				DecisionTreeNode curr;
+				while (iter.hasNext()) {
+
+					if (stop)
+						return;
+
+					curr = iter.next();
+					// System.err.println("NOd: " + curr.toString() + " " +
+					// curr.checked);
+					if (!curr.beingProcessed && curr.getChildren().isEmpty()) {
+						discovered.add(curr);
+					} else if (!curr.beingProcessed)
+						next.add(curr.getChildren());
+				}
+
 			}
 		}
 

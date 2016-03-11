@@ -89,7 +89,7 @@ public class DecisionTree {
 
 		private OthelloSide side;
 		
-		public boolean checked;
+		public boolean beingProcessed;
 
 		public DecisionTreeNode(Move m, OthelloSide side) {
 			children = new ConcurrentLinkedQueue<DecisionTreeNode>();
@@ -99,7 +99,7 @@ public class DecisionTree {
 			baseValue = Integer.MIN_VALUE;
 			smartValue = Integer.MIN_VALUE;
 			score = Integer.MIN_VALUE;
-			checked = false;
+			beingProcessed = false;
 		}
 
 		@Override

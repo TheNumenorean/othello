@@ -39,10 +39,12 @@ public class AIJob implements Runnable {
 		 * This method should calculate the value of the current move, then
 		 * propagate it up the line to other moves.
 		 */
+		
+		node.beingProcessed = true;
 
 		System.err.println("Starting job on " + node.getMove());
 
-		OthelloBoard previous = generateNewBoardForMove(board, node);
+		OthelloBoard previous = updateBoardForMove(board.copy(), node);
 		OthelloBoard current = previous.copy();
 		if (node.getMove().equals(Move.NO_MOVE)) {// Eventually replace with pv
 													// value for no move case.
@@ -69,7 +71,8 @@ public class AIJob implements Runnable {
 		}
 
 		runningThreads.dec();
-
+		node.beingProcessed = false;
+		
 	}
 
 	/**
@@ -86,7 +89,7 @@ public class AIJob implements Runnable {
 	 *            Node to iterate moves from
 	 * @return A new OthelloBoard
 	 */
-	public static OthelloBoard generateNewBoardForMove(OthelloBoard base, DecisionTreeNode node) {
+	public static OthelloBoard updateBoardForMove(OthelloBoard base, DecisionTreeNode node) {
 
 		Stack<Move> moves = new Stack<Move>();
 		OthelloSide side = node.getSide();
@@ -97,16 +100,15 @@ public class AIJob implements Runnable {
 			moves.push(tmp.getMove());
 			side = side.opposite();
 		}
-
-		OthelloBoard curr = base.copy();
+		
 		while (!moves.isEmpty()) {
 			Move nextMove = moves.pop();
 			if (!tmp.equals(Move.NO_MOVE))
-				curr.move(nextMove, side);
+				base.move(nextMove, side);
 			side = side.opposite();
 		}
 
-		return curr;
+		return base;
 	}
 
 	/**
