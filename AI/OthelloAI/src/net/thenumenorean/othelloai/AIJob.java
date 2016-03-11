@@ -23,7 +23,8 @@ public class AIJob implements Runnable {
 	private DecisionTreeNode node;
 	private ThreadCounter runningThreads;
 
-	public AIJob(OthelloAI othelloAI, OthelloBoard board, PositionValue pv, DecisionTreeNode node, ThreadCounter runningThreads) {
+	public AIJob(OthelloAI othelloAI, OthelloBoard board, PositionValue pv, DecisionTreeNode node,
+			ThreadCounter runningThreads) {
 		this.othelloAI = othelloAI;
 		this.board = board;
 		this.pv = pv;
@@ -38,41 +39,35 @@ public class AIJob implements Runnable {
 		 * This method should calculate the value of the current move, then
 		 * propagate it up the line to other moves.
 		 */
-		
+
 		System.err.println("Starting job on " + node.getMove());
 
 		OthelloBoard previous = generateNewBoardForMove(board, node);
 		OthelloBoard current = previous.copy();
-		if(node.getMove().equals(Move.NO_MOVE))
-		{//Eventually replace with pv value for no move case.
+		if (node.getMove().equals(Move.NO_MOVE)) {// Eventually replace with pv
+													// value for no move case.
 			node.baseValue = 0;
 			node.smartValue = 0;
-		} 
-		else 
-		{
+		} else {
 			current.move(node.getMove(), node.getSide());
-		
+
 			int baseValueGained = getValueDifference(previous, current);
 			node.baseValue = baseValueGained;
 			node.smartValue = baseValueGained;
 		}
-		if(othelloAI.LOCAL_SIDE == OthelloSide.BLACK)
-		{
+		if (othelloAI.LOCAL_SIDE == OthelloSide.BLACK) {
 			node.score = current.countBlack() - current.countWhite();
-		}
-		else
-		{
+		} else {
 			node.score = current.countWhite() - current.countBlack();
 		}
-		
+
 		OthelloSide nextSide = node.getSide().opposite();
 		Move[] nextMoves = current.getValidMoves(nextSide);
-		for(Move move : nextMoves)
-		{
-			DecisionTreeNode childNode = othelloAI.decisionTree.new  DecisionTreeNode(move, nextSide);
+		for (Move move : nextMoves) {
+			DecisionTreeNode childNode = othelloAI.decisionTree.new DecisionTreeNode(move, nextSide);
 			node.addChild(childNode);
 		}
-		
+
 		runningThreads.dec();
 
 	}
@@ -106,7 +101,7 @@ public class AIJob implements Runnable {
 		OthelloBoard curr = base.copy();
 		while (!moves.isEmpty()) {
 			Move nextMove = moves.pop();
-			if(!tmp.equals(Move.NO_MOVE))
+			if (!tmp.equals(Move.NO_MOVE))
 				curr.move(nextMove, side);
 			side = side.opposite();
 		}
@@ -123,34 +118,55 @@ public class AIJob implements Runnable {
 	 *            The current board configuration after a move was played
 	 * @return The value gained/lost from the prevBoard to the currBoard.
 	 */
-	public int getValueDifference(OthelloBoard prevBoard, OthelloBoard currBoard)
-	{
+	public int getValueDifference(OthelloBoard prevBoard, OthelloBoard currBoard) {
 		int prevBoardVal = 0;
 		int currBoardVal = 0;
-		for(int i = 0; i < 8; i++)
-		{
-			for(int j = 0; j < 8; j++)
-			{
-				if(prevBoard.occupied(i, j))
-				{
-					if((prevBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK) || (prevBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE))
-					{// If the tile is yours, add the value of it to the total, otherwise subtract it.
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (prevBoard.occupied(i, j)) {
+					if ((prevBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK)
+							|| (prevBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE)) {// If
+																														// the
+																														// tile
+																														// is
+																														// yours,
+																														// add
+																														// the
+																														// value
+																														// of
+																														// it
+																														// to
+																														// the
+																														// total,
+																														// otherwise
+																														// subtract
+																														// it.
 						prevBoardVal += pv.getValueOfLocation(i, j);
-					}
-					else
-					{
+					} else {
 						prevBoardVal -= pv.getValueOfLocation(i, j);
 					}
 				}
-				
-				if(currBoard.occupied(i, j))
-				{
-					if((currBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK) || (currBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE))
-					{// If the tile is yours, add the value of it to the total, otherwise subtract it.
+
+				if (currBoard.occupied(i, j)) {
+					if ((currBoard.get(OthelloSide.BLACK, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.BLACK)
+							|| (currBoard.get(OthelloSide.WHITE, i, j) && othelloAI.LOCAL_SIDE == OthelloSide.WHITE)) {// If
+																														// the
+																														// tile
+																														// is
+																														// yours,
+																														// add
+																														// the
+																														// value
+																														// of
+																														// it
+																														// to
+																														// the
+																														// total,
+																														// otherwise
+																														// subtract
+																														// it.
 						currBoardVal += pv.getValueOfLocation(i, j);
-					}
-					else
-					{
+					} else {
 						currBoardVal -= pv.getValueOfLocation(i, j);
 					}
 				}

@@ -62,15 +62,15 @@ public class OthelloAI {
 		// Start all required threads after initializing
 		new Thread(inputListener).start();
 		Thread t = new Thread(aiThread);
-		t.start();
-		
+
 		Move[] nextMoves = board.getValidMoves(OthelloSide.BLACK);
-		for(Move move : nextMoves)
-		{
-			DecisionTreeNode childNode = decisionTree.new  DecisionTreeNode(move, OthelloSide.BLACK);
+		for (Move move : nextMoves) {
+			DecisionTreeNode childNode = decisionTree.new DecisionTreeNode(move, OthelloSide.BLACK);
 			decisionTree.getPossibleNextMoves().add(childNode);
 			System.err.println("Start moves " + move);
 		}
+
+		t.start();
 
 		// Inform host that init is done
 		link.sendInitDone();
@@ -94,13 +94,18 @@ public class OthelloAI {
 
 	public Move getBestMove() {
 
+		System.err.println("Getting best move...");
+
 		if (decisionTree.getNextTurnPlayer() != LOCAL_SIDE)
 			throw new InternalError("Tried to get best move for non-local side");
-		
+
+		System.err.print("Checking: ");
 		Iterator<DecisionTreeNode> iter = decisionTree.getPossibleNextMoves().iterator();
 		DecisionTreeNode minimax = iter.next();
 		while (iter.hasNext()) {
 			DecisionTreeNode next = iter.next();
+
+			System.err.print("{" + minimax.smartValue + ":" + next.smartValue + "}" + next.checked);
 
 			if (minimax.smartValue < next.smartValue)
 				minimax = next;
@@ -142,43 +147,43 @@ public class OthelloAI {
 		@Override
 		public void run() {
 
-			DecisionTreeSearch searcher = null;
+			DecisionTreeSearch searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
+			;
+			(new Thread(searcher)).start();
 
 			while (!stop) {
 
-				if (searcher == null || searcher.finished) {
-					//System.err.println("Restarting searcher...");
-					if(decisionTree.getPossibleNextMoves().isEmpty()) {
-						
-						Move[] nextMoves = board.getValidMoves(decisionTree.getNextTurnPlayer());
-						for(Move move : nextMoves)
-						{
-							DecisionTreeNode childNode = othelloAI.decisionTree.new  DecisionTreeNode(move, decisionTree.getNextTurnPlayer());
-							decisionTree.getPossibleNextMoves().add(childNode);
-						}
-						
-					}
-					searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
+				if (searcher.finished) {
+					// System.err.println("Restarting searcher...");
+
 					(new Thread(searcher)).start();
+
 				}
 
 				if (newMove != null) {
 					searcher.stop();
+					searcher = new DecisionTreeSearch(decisionTree.getPossibleNextMoves());
 					othelloAI.decisionTree.moveOccured(newMove);
 					newMove = null;
-					
+					(new Thread(searcher)).start();
+
 				}
 
-				//System.err.println(searcher.discovered.size());
+				System.err.println(searcher.discovered.size());
 				if (!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
 					runningThreads.inc();
-					
+
 					(new Thread(new AIJob(othelloAI, board, PositionValue.MINIMAL, searcher.discovered.poll(),
 							runningThreads))).start();
-					
+
 				}
-				
-				
+
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			}
 
@@ -187,6 +192,7 @@ public class OthelloAI {
 		/**
 		 * Cease execution of the AI thread
 		 */
+		@SuppressWarnings("unused")
 		public void stop() {
 			stop = true;
 		}
@@ -211,8 +217,8 @@ public class OthelloAI {
 			this.init = start;
 			finished = false;
 			stop = false;
-			
-			if(start.isEmpty())
+
+			if (start.isEmpty())
 				System.err.println("empty");
 		}
 
@@ -223,8 +229,7 @@ public class OthelloAI {
 		}
 
 		private void addChildren(ConcurrentLinkedQueue<DecisionTreeNode> start) {
-			
-			
+
 			if (stop)
 				return;
 
@@ -238,19 +243,18 @@ public class OthelloAI {
 					return;
 
 				curr = iter.next();
-				//System.err.println("NOd: " + curr.toString());
+				System.err.println("NOd: " + curr.toString() + " " + curr.checked);
 				if (!curr.checked) {
 					curr.checked = true;
 					discovered.add(curr);
-				}
-				else
+				} else
 					next.push(curr.getChildren());
 			}
 
 			while (!next.isEmpty()) {
 				if (stop)
 					return;
-				
+
 				addChildren(next.pop());
 			}
 		}
