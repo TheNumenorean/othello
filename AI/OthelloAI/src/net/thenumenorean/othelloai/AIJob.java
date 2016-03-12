@@ -48,7 +48,7 @@ public class AIJob implements Runnable {
 		// The thread must finish to decrease the counter or there wont be any
 		// new threads.
 		try {
-			OthelloBoard previous = updateBoardForMove(board.copy(), node);
+			OthelloBoard previous = updateBoardForMove(board, node);
 			OthelloBoard current = previous.copy();
 			if (node.getMove().equals(Move.NO_MOVE)) {// Eventually replace with
 														// pv
