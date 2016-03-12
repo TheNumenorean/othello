@@ -15,7 +15,7 @@ import net.thenumenorean.othelloai.comms.StdCommLink;
 
 public class OthelloAI {
 
-	public static final int MAX_THREADS = 10;
+	public static final int MAX_THREADS = 5;
 
 	public final OthelloSide LOCAL_SIDE;
 
@@ -193,7 +193,7 @@ public class OthelloAI {
 				if (!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
 					runningThreads.inc();
 
-					(new Thread(new AIJob(othelloAI, board, PositionValue.MINIMAL, searcher.discovered.poll(),
+					(new Thread(new AIJob(othelloAI, board.copy(), PositionValue.MINIMAL, searcher.discovered.poll(),
 							runningThreads))).start();
 
 				}

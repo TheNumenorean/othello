@@ -75,8 +75,6 @@ public class AIJob implements Runnable {
 				DecisionTreeNode childNode = othelloAI.decisionTree.new DecisionTreeNode(move, nextSide);
 				node.addChild(childNode);
 			}
-		} catch (InternalError e) {
-			System.err.println(e.getMessage());
 		} catch (Exception s) {
 			s.printStackTrace();
 		} finally {

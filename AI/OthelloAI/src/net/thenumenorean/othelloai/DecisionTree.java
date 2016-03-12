@@ -45,6 +45,12 @@ public class DecisionTree {
 			DecisionTreeNode test = iter.next();
 			if(test.move.equals(m)) {
 				nextMoves = test.children;
+				
+				Iterator<DecisionTreeNode> nextMovesIter = nextMoves.iterator();
+				while(nextMovesIter.hasNext()) {
+					nextMovesIter.next().setParent(null);
+				}
+				
 				test.setParent(null);
 				currentTurn = currentTurn.opposite();
 				return;

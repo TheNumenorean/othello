@@ -1,4 +1,5 @@
 package net.thenumenorean.othelloai.board;
+
 import java.util.BitSet;
 import java.util.ArrayList;
 
@@ -19,7 +20,7 @@ public class OthelloBoard {
 		BLACK, WHITE;
 
 		public OthelloSide opposite() {
-			if(this.equals(BLACK))
+			if (this.equals(BLACK))
 				return WHITE;
 			return BLACK;
 		}
@@ -101,32 +102,29 @@ public class OthelloBoard {
 	 * 
 	 * @param side
 	 *            Othelloside to check for valid moves.
-	 * @return Move[] containing all valid moves for the given side.  Can be empty if no valid moves.
+	 * @return Move[] containing all valid moves for the given side. Can be
+	 *         empty if no valid moves.
 	 */
-	public Move[] getValidMoves(OthelloSide side)
-	{
-		//No reason to run hasMoves to check if will require running loop twice, will return empty array if no valid moves.
-		ArrayList<Move> validMovesList= new ArrayList<Move>();
-		
-		for(int i = 0; i < 8; i++)
-		{
-			for(int j = 0; j < 8; j++)
-			{
+	public Move[] getValidMoves(OthelloSide side) {
+		// No reason to run hasMoves to check if will require running loop
+		// twice, will return empty array if no valid moves.
+		ArrayList<Move> validMovesList = new ArrayList<Move>();
+
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
 				Move moveToTest = new Move(i, j);
-				if(checkMove(moveToTest, side))
-				{
+				if (checkMove(moveToTest, side)) {
 					validMovesList.add(moveToTest);
 				}
 			}
 		}
 		Move[] validMovesArray = new Move[validMovesList.size()];
-		
-		if(validMovesList.size() == 0)
+
+		if (validMovesList.size() == 0)
 			validMovesList.add(Move.NO_MOVE);
 		return validMovesList.toArray(validMovesArray);
 	}
-	
-	
+
 	/**
 	 * Checks that the point at the given coordinates is on the board.
 	 * 
@@ -134,7 +132,7 @@ public class OthelloBoard {
 	 *            The x coordinate of the point to check.
 	 * @param y
 	 *            The y coordinate of the point to check.
-	 *            
+	 * 
 	 * @return true if the coordinate is on the board (x=0-7, y=0-7)
 	 */
 	boolean onBoard(int x, int y) {
@@ -157,8 +155,7 @@ public class OthelloBoard {
 			return !hasMoves(turn);
 
 		// Make sure the square hasn't already been taken.
-		if (occupied(m.getX(), m.getY()))
-		{
+		if (occupied(m.getX(), m.getY())) {
 			return false;
 		}
 
