@@ -106,7 +106,7 @@ public class OthelloAI {
 		while (iter.hasNext()) {
 			DecisionTreeNode next = iter.next();
 
-			System.err.print("{" + minimax.smartValue + ":" + next.smartValue + "}");
+			System.err.println(minimax.getMove() + "=" + minimax.smartValue + ", " + next.getMove() + "=" + next.smartValue);
 
 			if (minimax.smartValue < next.smartValue)
 				minimax = next;
@@ -193,7 +193,7 @@ public class OthelloAI {
 				if (!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
 					runningThreads.inc();
 
-					(new Thread(new AIJob(othelloAI, board.copy(), PositionValue.STANDARD, searcher.discovered.poll(),
+					(new Thread(new AIJob(othelloAI, board.copy(), PositionValue.AGGRESSIVE, searcher.discovered.poll(),
 							runningThreads))).start();
 
 				}
@@ -301,12 +301,10 @@ public class OthelloAI {
 
 		synchronized public void inc() {
 			i++;
-			System.err.println("Incr to " + i);
 		}
 
 		synchronized public void dec() {
 			i--;
-			System.err.println("Decr to " + i);
 		}
 
 		public int val() {

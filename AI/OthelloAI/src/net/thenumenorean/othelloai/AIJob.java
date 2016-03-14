@@ -42,7 +42,7 @@ public class AIJob implements Runnable {
 
 		node.beingProcessed = true;
 
-		System.err.println("Starting job on " + node.getMove());
+		//System.err.println("Starting job on " + node.getMove());
 		Thread.currentThread().setName("AIJob-" + node.getMove() + "-" + Thread.currentThread().getId());
 
 		// The thread must finish to decrease the counter or there wont be any
