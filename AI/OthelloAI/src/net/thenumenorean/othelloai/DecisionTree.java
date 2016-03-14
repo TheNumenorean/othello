@@ -164,6 +164,10 @@ public class DecisionTree {
 			int minimax = iterator.next().smartValue;
 			while (iterator.hasNext()) {
 				int next = iterator.next().smartValue;
+				
+				if(next == Integer.MIN_VALUE)
+					continue;
+				
 				if (side == DecisionTree.this.othelloAI.LOCAL_SIDE) {
 					// CHild nodes are the enemies, so we assume worst case, or
 					// most negative
