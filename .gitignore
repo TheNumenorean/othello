@@ -5,3 +5,8 @@ RemoteSystemsTempFiles
 testgame
 testgame.o
 tmp.txt
+AI/OthelloAI/.classpath
+
+*.o
+
+player

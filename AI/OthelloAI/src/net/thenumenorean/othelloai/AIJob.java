@@ -60,6 +60,10 @@ public class AIJob implements Runnable {
 				current.move(node.getMove(), node.getSide());
 
 				int baseValueGained = getValueDifference(previous, current);
+				if(othelloAI.LOCAL_SIDE != node.getSide())
+				{
+					baseValueGained *= -1;
+				}
 				node.baseValue = baseValueGained;
 				node.smartValue = baseValueGained;
 			}
