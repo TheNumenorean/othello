@@ -15,7 +15,7 @@ import net.thenumenorean.othelloai.comms.StdCommLink;
 
 public class OthelloAI {
 
-	public static final int MAX_THREADS = 5;
+	public static final int MAX_THREADS = 10;
 
 	public final OthelloSide LOCAL_SIDE;
 
