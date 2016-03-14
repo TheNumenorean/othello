@@ -42,7 +42,7 @@ public class AIJob implements Runnable {
 
 		node.beingProcessed = true;
 
-		//System.err.println("Starting job on " + node.getMove());
+		// System.err.println("Starting job on " + node.getMove());
 		Thread.currentThread().setName("AIJob-" + node.getMove() + "-" + Thread.currentThread().getId());
 
 		// The thread must finish to decrease the counter or there wont be any
@@ -60,8 +60,7 @@ public class AIJob implements Runnable {
 				current.move(node.getMove(), node.getSide());
 
 				int baseValueGained = getValueDifference(previous, current);
-				if(othelloAI.LOCAL_SIDE != node.getSide())
-				{
+				if (othelloAI.LOCAL_SIDE != node.getSide()) {
 					baseValueGained *= -1;
 				}
 				node.baseValue = baseValueGained;
@@ -79,10 +78,11 @@ public class AIJob implements Runnable {
 				DecisionTreeNode childNode = othelloAI.decisionTree.new DecisionTreeNode(move, nextSide);
 				node.addChild(childNode);
 			}
+			node.recalculateSmartValue();
+			
 		} catch (Exception s) {
 			s.printStackTrace();
 		} finally {
-		
 
 			runningThreads.dec();
 			node.beingProcessed = false;
