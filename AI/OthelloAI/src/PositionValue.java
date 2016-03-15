@@ -1,4 +1,4 @@
-package net.thenumenorean.othelloai.board;
+
 
 /**
  * Represents how to value specific squares.

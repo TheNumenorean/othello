@@ -1,10 +1,7 @@
-package net.thenumenorean.othelloai;
+
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import net.thenumenorean.othelloai.board.Move;
-import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
 
 /**
  * Represents everything discovered by the AI

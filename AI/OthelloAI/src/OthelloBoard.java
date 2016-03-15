@@ -1,4 +1,4 @@
-package net.thenumenorean.othelloai.board;
+
 
 import java.util.BitSet;
 import java.util.ArrayList;

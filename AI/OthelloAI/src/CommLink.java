@@ -1,7 +1,3 @@
-package net.thenumenorean.othelloai.comms;
-
-import net.thenumenorean.othelloai.board.Move;
-
 /**
  * Interface standardizing communications to an Othello server.
  * 

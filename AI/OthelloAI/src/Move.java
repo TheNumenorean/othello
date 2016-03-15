@@ -1,4 +1,4 @@
-package net.thenumenorean.othelloai.board;
+
 
 /**
  * Represents a square on the Othello board.

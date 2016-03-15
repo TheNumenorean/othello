@@ -1,17 +1,11 @@
-package net.thenumenorean.othelloai;
+
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import net.thenumenorean.othelloai.DecisionTree.DecisionTreeNode;
-import net.thenumenorean.othelloai.board.Move;
-import net.thenumenorean.othelloai.board.OthelloBoard;
-import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
-import net.thenumenorean.othelloai.board.PositionValue;
-import net.thenumenorean.othelloai.comms.CommLink;
-import net.thenumenorean.othelloai.comms.StdCommLink;
+import DecisionTree.DecisionTreeNode;
 
 public class OthelloAI {
 

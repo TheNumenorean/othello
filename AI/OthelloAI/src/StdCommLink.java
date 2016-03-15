@@ -1,11 +1,9 @@
 /**
  * 
  */
-package net.thenumenorean.othelloai.comms;
+
 
 import java.util.Scanner;
-
-import net.thenumenorean.othelloai.board.Move;
 
 /**
  * Implementation of CommLink that uses Stdin and Stdout to communicate with a

@@ -1,10 +1,7 @@
 /**
  * 
  */
-package net.thenumenorean.othelloai;
 
-import net.thenumenorean.othelloai.board.Move;
-import net.thenumenorean.othelloai.comms.CommLink;
 
 /**
  * Listens to Input from a given link, and when it receives input it puts the

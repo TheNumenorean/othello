@@ -1,13 +1,6 @@
-package net.thenumenorean.othelloai;
+
 
 import java.util.Stack;
-
-import net.thenumenorean.othelloai.DecisionTree.DecisionTreeNode;
-import net.thenumenorean.othelloai.OthelloAI.ThreadCounter;
-import net.thenumenorean.othelloai.board.Move;
-import net.thenumenorean.othelloai.board.OthelloBoard;
-import net.thenumenorean.othelloai.board.OthelloBoard.OthelloSide;
-import net.thenumenorean.othelloai.board.PositionValue;
 
 /**
  * Runs computation algorithms for the AI.
