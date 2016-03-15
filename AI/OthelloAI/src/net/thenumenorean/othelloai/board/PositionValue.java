@@ -8,7 +8,7 @@ package net.thenumenorean.othelloai.board;
  */
 public enum PositionValue {
 
-	MINIMAL(1, 2, 3, -1, -1), STANDARD(1, 3, 7, -3, -10), AGGRESSIVE(1, 2, 10, -5, -5);
+	MINIMAL(1, 2, 3, -1, -1), STANDARD(1, 3, 7, -3, -10), AGGRESSIVE(1, 2, 10, -5, -5), SUPER(1,3, 100, -5, 0);
 
 
 	private int interiorValue;

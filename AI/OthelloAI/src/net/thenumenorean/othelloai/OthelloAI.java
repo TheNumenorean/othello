@@ -193,7 +193,7 @@ public class OthelloAI {
 				if (!searcher.discovered.isEmpty() && runningThreads.val() < MAX_THREADS) {
 					runningThreads.inc();
 
-					(new Thread(new AIJob(othelloAI, board.copy(), PositionValue.AGGRESSIVE, searcher.discovered.poll(),
+					(new Thread(new AIJob(othelloAI, board.copy(), PositionValue.SUPER, searcher.discovered.poll(),
 							runningThreads))).start();
 
 				}
