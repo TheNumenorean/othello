@@ -1,3 +1,3 @@
-Caltech CS2 Assignment 9: Othello
+To build, run "make ai", and run with "java net.thenumenorean.othelloai.OthelloAI <side>"
 
-See [assignment9_part1.html](http://htmlpreview.github.io/?https://github.com/caltechcs2/othello/blob/master/assignment9_part1.html) and [assignment9_part2.html](http://htmlpreview.github.io/?https://github.com/caltechcs2/othello/blob/master/assignment9_part2.html)
+To clean, run "make aiclean"

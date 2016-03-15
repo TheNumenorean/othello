@@ -27,3 +27,9 @@ clean:
 	rm -f *.o $(PLAYERNAME) testgame testminimax
 	
 .PHONY: java testminimax
+
+ai:
+	javac -d ./ -cp AI/OthelloAI/src/ AI/OthelloAI/src/net/thenumenorean/othelloai/*.java
+
+aiclean:
+	rm -rf ./net/thenumenorean/othelloai
